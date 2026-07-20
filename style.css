@@ -270,6 +270,96 @@ strong { color: var(--gray-900); font-weight: 600; }
 .edu-card__date { font-size: 13px; color: var(--gray-400); margin-bottom: 0.5rem; }
 .edu-card__desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
+/* ─── LATEST BLOG PREVIEW ─── */
+.blog-preview-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  max-width: 900px;
+}
+.blog-preview-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--gray-300);
+}
+.blog-preview-card__image {
+  background: linear-gradient(135deg, var(--blue-light) 0%, var(--purple-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.blog-preview-card__icon {
+  font-size: 3rem;
+  z-index: 1;
+}
+.blog-preview-card__image::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.08);
+  top: -20px;
+  right: -20px;
+}
+.blog-preview-card__content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.blog-preview-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.blog-preview-card__tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--blue-light);
+  color: var(--blue);
+}
+.blog-preview-card__date {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+.blog-preview-card__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+.blog-preview-card__excerpt {
+  font-size: 14px;
+  color: var(--gray-500);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+.blog-preview-card__read {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.blog-preview-card:hover .blog-preview-card__read { gap: 0.5rem; }
+
 /* ─── CONTACT ─── */
 .contact { text-align: center; max-width: 500px; }
 .contact__text { font-size: 1.05rem; color: var(--gray-500); margin-bottom: 2rem; }

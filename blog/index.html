@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Anand V</title>
+  <meta name="description" content="Blog by Anand V — Articles on AI, Data Science, Full-Stack Engineering, and building intelligent web applications." />
+  <meta property="og:title" content="Blog — Anand V" />
+  <meta property="og:description" content="Articles on AI, Data Science, and Full-Stack Engineering." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="../" class="nav__logo">AV</a>
+      <ul class="nav__links">
+        <li><a href="../">Portfolio</a></li>
+        <li><a href="./" class="active">Blog</a></li>
+        <li><a href="../#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="blog-hero">
+    <div class="container">
+      <h1 class="blog-hero__title fade-in">Blog</h1>
+      <p class="blog-hero__sub fade-in">
+        Exploring the intersection of Full-Stack Engineering, AI, and Data Science — one post at a time.
+      </p>
+    </div>
+  </section>
+
+  <!-- BLOG POSTS -->
+  <section class="container">
+    <div class="blog-grid">
+
+      <a href="sentiment-analysis-transformers-js-vue/" class="blog-card fade-in" id="post-sentiment-analysis">
+        <div class="blog-card__image">
+          <span class="blog-card__image-icon">🧠</span>
+        </div>
+        <div class="blog-card__content">
+          <div class="blog-card__meta">
+            <span class="blog-card__tag">AI + Vue.js</span>
+            <span class="blog-card__date">July 2026</span>
+          </div>
+          <h2 class="blog-card__title">Sentiment Analysis on News Using Transformers.js in Vue</h2>
+          <p class="blog-card__excerpt">
+            Run Hugging Face transformer models directly in the browser — no backend needed. 
+            Build a Vue.js app that classifies news headlines as positive, negative, or neutral using Web Workers and ONNX.
+          </p>
+          <span class="blog-card__read">Read article →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>Built by <strong>Anand V</strong> · Full-Stack Engineer & AI Enthusiast</p>
+    </div>
+  </footer>
+
+  <script>
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

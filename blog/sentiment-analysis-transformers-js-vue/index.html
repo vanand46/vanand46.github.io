@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentiment Analysis on News Using Transformers.js in Vue — Anand V</title>
+  <meta name="description" content="Learn how to build a browser-based sentiment analysis app for news headlines using Transformers.js and Vue.js — no backend, no API keys, fully client-side ML." />
+  <meta property="og:title" content="Sentiment Analysis on News Using Transformers.js in Vue" />
+  <meta property="og:description" content="Run Hugging Face models in the browser with Vue.js. Build a real-time news sentiment classifier — no backend needed." />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-07-20" />
+  <meta property="article:author" content="Anand V" />
+  <meta property="article:tag" content="Transformers.js" />
+  <meta property="article:tag" content="Vue.js" />
+  <meta property="article:tag" content="Sentiment Analysis" />
+  <meta property="article:tag" content="NLP" />
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <!-- READING PROGRESS -->
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="../../" class="nav__logo">AV</a>
+      <ul class="nav__links">
+        <li><a href="../../">Portfolio</a></li>
+        <li><a href="../" class="active">Blog</a></li>
+        <li><a href="../../#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ARTICLE HEADER -->
+  <header class="article-header">
+    <div class="container">
+      <div class="article__breadcrumb">
+        <a href="../">Blog</a>
+        <span>›</span>
+        <span>AI + Vue.js</span>
+      </div>
+      <span class="article__tag">AI + Vue.js</span>
+      <h1 class="article__title">Sentiment Analysis on News Using Transformers.js in Vue</h1>
+      <p class="article__subtitle">
+        Run Hugging Face transformer models directly in the browser — no Python backend, no API keys.
+        Build a Vue.js app that classifies news headlines as positive, negative, or neutral in real time.
+      </p>
+      <div class="article__meta">
+        <span class="article__meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          12 min read
+        </span>
+        <span class="article__meta-divider"></span>
+        <span class="article__meta-item">July 20, 2026</span>
+        <span class="article__meta-divider"></span>
+        <span class="article__meta-item">Anand V</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <main class="article-body">
+    <div class="container">
+
+      <!-- TABLE OF CONTENTS -->
+      <nav class="toc" id="toc">
+        <div class="toc__title">Contents</div>
+        <ol>
+          <li><a href="#why-browser-ml">Why Run ML in the Browser?</a></li>
+          <li><a href="#what-is-transformers-js">What is Transformers.js?</a></li>
+          <li><a href="#architecture">Architecture Overview</a></li>
+          <li><a href="#project-setup">Project Setup</a></li>
+          <li><a href="#web-worker">Setting Up the Web Worker</a></li>
+          <li><a href="#vue-composable">Creating the Vue Composable</a></li>
+          <li><a href="#building-ui">Building the UI Components</a></li>
+          <li><a href="#batch-analysis">Batch Analysis with Progress</a></li>
+          <li><a href="#performance">Performance Tips</a></li>
+          <li><a href="#conclusion">Conclusion & Next Steps</a></li>
+        </ol>
+      </nav>
+
+      <div class="article-content">
+
+        <!-- SECTION 1: WHY BROWSER ML -->
+        <h2 id="why-browser-ml">1. Why Run ML in the Browser?</h2>
+
+        <p>
+          Traditional ML inference requires a backend server — you send text to an API, a Python service runs the model, and you get results back. This works, but it adds <strong>latency, server costs, and complexity</strong>.
+        </p>
+
+        <p>What if the model ran entirely in the user's browser?</p>
+
+        <ul>
+          <li><strong>Zero backend costs</strong> — no GPU servers, no API billing</li>
+          <li><strong>Privacy-first</strong> — user data never leaves their device</li>
+          <li><strong>Offline capable</strong> — works after the model is cached</li>
+          <li><strong>Instant deployment</strong> — ship as a static site on GitHub Pages</li>
+        </ul>
+
+        <p>
+          This is exactly what <strong>Transformers.js</strong> enables. It brings Hugging Face's transformer models to JavaScript, running inference via <strong>ONNX Runtime</strong> in the browser.
+        </p>
+
+        <!-- SECTION 2: WHAT IS TRANSFORMERS.JS -->
+        <h2 id="what-is-transformers-js">2. What is Transformers.js?</h2>
+
+        <p>
+          <a href="https://huggingface.co/docs/transformers.js" target="_blank" rel="noopener noreferrer">Transformers.js</a> 
+          is a JavaScript library by Hugging Face that lets you run pre-trained transformer models directly in the browser (or Node.js). Under the hood, it uses <strong>ONNX Runtime Web</strong> — meaning models are compiled to the ONNX format and executed via WebAssembly or WebGPU.
+        </p>
+
+        <div class="callout callout--info">
+          <span class="callout__icon">💡</span>
+          <div>
+            <strong>Key insight:</strong> Transformers.js provides a pipeline API almost identical to Python's <code>transformers</code> library. 
+            If you've used <code>pipeline("sentiment-analysis")</code> in Python, the JavaScript version is nearly the same.
+          </div>
+        </div>
+
+        <p>For sentiment analysis, we'll use the <code>sentiment-analysis</code> pipeline with the <code>Xenova/distilbert-base-uncased-finetuned-sst-2-english</code> model — a lightweight, quantized model optimized for browser use (~67MB).</p>
+
+        <!-- SECTION 3: ARCHITECTURE -->
+        <h2 id="architecture">3. Architecture Overview</h2>
+
+        <p>Here's how the pieces fit together:</p>
+
+        <div class="arch-diagram">
+          <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Vue UI Box -->
+            <rect x="10" y="80" width="140" height="100" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+            <text x="80" y="118" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#1e40af">Vue.js UI</text>
+            <text x="80" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Components</text>
+            <text x="80" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">+ Composable</text>
+
+            <!-- Arrow 1 -->
+            <line x1="150" y1="130" x2="195" y2="130" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="173" y="122" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#9ca3af">postMessage</text>
+
+            <!-- Web Worker Box -->
+            <rect x="195" y="80" width="140" height="100" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+            <text x="265" y="118" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#5b21b6">Web Worker</text>
+            <text x="265" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Off main thread</text>
+            <text x="265" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Non-blocking</text>
+
+            <!-- Arrow 2 -->
+            <line x1="335" y1="130" x2="380" y2="130" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="358" y="122" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#9ca3af">pipeline()</text>
+
+            <!-- Transformers.js Box -->
+            <rect x="380" y="80" width="140" height="100" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+            <text x="450" y="118" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#065f46">Transformers.js</text>
+            <text x="450" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Pipeline API</text>
+            <text x="450" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Model loading</text>
+
+            <!-- Arrow 3 -->
+            <line x1="520" y1="130" x2="540" y2="130" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- ONNX Box -->
+            <rect x="540" y="80" width="130" height="100" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+            <text x="605" y="118" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#9f1239">ONNX Runtime</text>
+            <text x="605" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">WASM / WebGPU</text>
+            <text x="605" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6b7280">Inference</text>
+
+            <!-- Result arrow back -->
+            <path d="M 605 180 L 605 220 L 80 220 L 80 180" stroke="#059669" stroke-width="2" fill="none" stroke-dasharray="6 3" marker-end="url(#arrow-green)"/>
+            <text x="340" y="238" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#059669">{ label: "POSITIVE", score: 0.9987 }</text>
+
+            <!-- Arrow markers -->
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#9ca3af"/></marker>
+              <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#059669"/></marker>
+            </defs>
+          </svg>
+          <p class="arch-diagram__caption">Data flow: Vue UI → Web Worker → Transformers.js → ONNX Runtime → Results</p>
+        </div>
+
+        <p>
+          The key design decision is running the model in a <strong>Web Worker</strong>. Transformer inference is CPU-intensive — doing it on the main thread would freeze the UI. The Web Worker runs in a separate thread, keeping the Vue app responsive while the model processes headlines.
+        </p>
+
+        <!-- SECTION 4: PROJECT SETUP -->
+        <h2 id="project-setup">4. Project Setup</h2>
+
+        <p>Start by scaffolding a new Vue project with Vite:</p>
+
+        <div class="code-header">Terminal</div>
+        <pre><code><span class="token-comment"># Create a new Vue project</span>
+npm create vue@latest news-sentiment-analyzer
+
+<span class="token-comment"># Navigate into the project</span>
+<span class="token-keyword">cd</span> news-sentiment-analyzer
+
+<span class="token-comment"># Install Transformers.js</span>
+npm install @huggingface/transformers
+
+<span class="token-comment"># Start the dev server</span>
+npm run dev</code></pre>
+
+        <p>During the Vue CLI prompts, select:</p>
+        <ul>
+          <li>TypeScript: <strong>No</strong> (keep it simple for this tutorial)</li>
+          <li>JSX: <strong>No</strong></li>
+          <li>Vue Router: <strong>No</strong> (single page app)</li>
+          <li>Pinia: <strong>No</strong> (we'll use a composable instead)</li>
+        </ul>
+
+        <div class="callout callout--tip">
+          <span class="callout__icon">⚡</span>
+          <div>
+            <strong>Vite configuration note:</strong> Vite handles Web Workers out of the box with the <code>?worker</code> import suffix. No extra configuration needed — this is one reason Vite + Vue is an excellent choice for this project.
+          </div>
+        </div>
+
+        <!-- SECTION 5: WEB WORKER -->
+        <h2 id="web-worker">5. Setting Up the Web Worker</h2>
+
+        <p>
+          The Web Worker is the bridge between your Vue UI and Transformers.js. It loads the model once, caches it, and processes incoming text.
+        </p>
+
+        <div class="code-header">src/workers/sentiment.worker.js</div>
+        <pre><code><span class="token-keyword">import</span> { pipeline } <span class="token-keyword">from</span> <span class="token-string">'@huggingface/transformers'</span>;
+
+<span class="token-comment">// Cache the pipeline instance</span>
+<span class="token-keyword">let</span> classifier = <span class="token-keyword">null</span>;
+
+<span class="token-comment">// Initialize the sentiment analysis pipeline</span>
+<span class="token-keyword">async function</span> <span class="token-function">loadModel</span>() {
+  <span class="token-keyword">if</span> (!classifier) {
+    <span class="token-function">self.postMessage</span>({
+      <span class="token-attr">type</span>: <span class="token-string">'status'</span>,
+      <span class="token-attr">message</span>: <span class="token-string">'Loading model...'</span>
+    });
+
+    classifier = <span class="token-keyword">await</span> <span class="token-function">pipeline</span>(
+      <span class="token-string">'sentiment-analysis'</span>,
+      <span class="token-string">'Xenova/distilbert-base-uncased-finetuned-sst-2-english'</span>,
+      { <span class="token-attr">progress_callback</span>: (progress) => {
+          <span class="token-function">self.postMessage</span>({
+            <span class="token-attr">type</span>: <span class="token-string">'loading-progress'</span>,
+            <span class="token-attr">progress</span>
+          });
+        }
+      }
+    );
+
+    <span class="token-function">self.postMessage</span>({
+      <span class="token-attr">type</span>: <span class="token-string">'status'</span>,
+      <span class="token-attr">message</span>: <span class="token-string">'Model ready!'</span>
+    });
+  }
+  <span class="token-keyword">return</span> classifier;
+}
+
+<span class="token-comment">// Listen for messages from the main thread</span>
+<span class="token-function">self.addEventListener</span>(<span class="token-string">'message'</span>, <span class="token-keyword">async</span> (event) => {
+  <span class="token-keyword">const</span> { type, texts, id } = event.data;
+
+  <span class="token-keyword">if</span> (type === <span class="token-string">'analyze'</span>) {
+    <span class="token-keyword">try</span> {
+      <span class="token-keyword">const</span> model = <span class="token-keyword">await</span> <span class="token-function">loadModel</span>();
+      <span class="token-keyword">const</span> results = [];
+
+      <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < texts.length; i++) {
+        <span class="token-keyword">const</span> result = <span class="token-keyword">await</span> <span class="token-function">model</span>(texts[i]);
+        results.<span class="token-function">push</span>({
+          <span class="token-attr">text</span>: texts[i],
+          <span class="token-attr">label</span>: result[<span class="token-number">0</span>].label,
+          <span class="token-attr">score</span>: result[<span class="token-number">0</span>].score
+        });
+
+        <span class="token-comment">// Report progress for batch processing</span>
+        <span class="token-function">self.postMessage</span>({
+          <span class="token-attr">type</span>: <span class="token-string">'progress'</span>,
+          <span class="token-attr">current</span>: i + <span class="token-number">1</span>,
+          <span class="token-attr">total</span>: texts.length,
+          id
+        });
+      }
+
+      <span class="token-function">self.postMessage</span>({
+        <span class="token-attr">type</span>: <span class="token-string">'result'</span>,
+        results,
+        id
+      });
+    } <span class="token-keyword">catch</span> (error) {
+      <span class="token-function">self.postMessage</span>({
+        <span class="token-attr">type</span>: <span class="token-string">'error'</span>,
+        <span class="token-attr">message</span>: error.message,
+        id
+      });
+    }
+  }
+});</code></pre>
+
+        <p>Key design choices here:</p>
+        <ul>
+          <li><strong>Model caching</strong> — <code>classifier</code> is loaded once and reused. The ONNX model files are also cached in the browser's Cache API by Transformers.js, so subsequent page loads are near-instant.</li>
+          <li><strong>Progress reporting</strong> — We send loading progress and per-item batch progress back to the UI, enabling a responsive loading bar.</li>
+          <li><strong>Error handling</strong> — Errors in the worker are caught and forwarded to the main thread instead of silently failing.</li>
+        </ul>
+
+        <!-- SECTION 6: VUE COMPOSABLE -->
+        <h2 id="vue-composable">6. Creating the Vue Composable</h2>
+
+        <p>
+          The composable wraps the Worker communication in a clean reactive API — <code>useSentiment()</code>. Any Vue component can call it without worrying about message passing or worker lifecycle.
+        </p>
+
+        <div class="code-header">src/composables/useSentiment.js</div>
+        <pre><code><span class="token-keyword">import</span> { ref, shallowRef } <span class="token-keyword">from</span> <span class="token-string">'vue'</span>;
+<span class="token-keyword">import</span> SentimentWorker <span class="token-keyword">from</span> <span class="token-string">'../workers/sentiment.worker.js?worker'</span>;
+
+<span class="token-keyword">export function</span> <span class="token-function">useSentiment</span>() {
+  <span class="token-keyword">const</span> results = <span class="token-function">shallowRef</span>([]);
+  <span class="token-keyword">const</span> isLoading = <span class="token-function">ref</span>(<span class="token-keyword">false</span>);
+  <span class="token-keyword">const</span> isModelReady = <span class="token-function">ref</span>(<span class="token-keyword">false</span>);
+  <span class="token-keyword">const</span> progress = <span class="token-function">ref</span>({ current: <span class="token-number">0</span>, total: <span class="token-number">0</span> });
+  <span class="token-keyword">const</span> status = <span class="token-function">ref</span>(<span class="token-string">'Initializing...'</span>);
+  <span class="token-keyword">const</span> error = <span class="token-function">ref</span>(<span class="token-keyword">null</span>);
+  <span class="token-keyword">const</span> loadingProgress = <span class="token-function">ref</span>(<span class="token-number">0</span>);
+
+  <span class="token-comment">// Create the worker</span>
+  <span class="token-keyword">const</span> worker = <span class="token-keyword">new</span> <span class="token-function">SentimentWorker</span>();
+  <span class="token-keyword">let</span> requestId = <span class="token-number">0</span>;
+
+  <span class="token-comment">// Listen for worker messages</span>
+  worker.<span class="token-function">addEventListener</span>(<span class="token-string">'message'</span>, (event) => {
+    <span class="token-keyword">const</span> data = event.data;
+
+    <span class="token-keyword">switch</span> (data.type) {
+      <span class="token-keyword">case</span> <span class="token-string">'status'</span>:
+        status.value = data.message;
+        <span class="token-keyword">if</span> (data.message === <span class="token-string">'Model ready!'</span>) {
+          isModelReady.value = <span class="token-keyword">true</span>;
+        }
+        <span class="token-keyword">break</span>;
+      <span class="token-keyword">case</span> <span class="token-string">'loading-progress'</span>:
+        <span class="token-keyword">if</span> (data.progress?.progress) {
+          loadingProgress.value = Math.<span class="token-function">round</span>(data.progress.progress);
+        }
+        <span class="token-keyword">break</span>;
+      <span class="token-keyword">case</span> <span class="token-string">'progress'</span>:
+        progress.value = {
+          current: data.current,
+          total: data.total
+        };
+        <span class="token-keyword">break</span>;
+      <span class="token-keyword">case</span> <span class="token-string">'result'</span>:
+        results.value = data.results;
+        isLoading.value = <span class="token-keyword">false</span>;
+        status.value = <span class="token-string">`Analyzed ${data.results.length} headlines`</span>;
+        <span class="token-keyword">break</span>;
+      <span class="token-keyword">case</span> <span class="token-string">'error'</span>:
+        error.value = data.message;
+        isLoading.value = <span class="token-keyword">false</span>;
+        <span class="token-keyword">break</span>;
+    }
+  });
+
+  <span class="token-comment">// Public API</span>
+  <span class="token-keyword">function</span> <span class="token-function">analyze</span>(texts) {
+    <span class="token-keyword">if</span> (!texts.length) <span class="token-keyword">return</span>;
+    isLoading.value = <span class="token-keyword">true</span>;
+    error.value = <span class="token-keyword">null</span>;
+    progress.value = { current: <span class="token-number">0</span>, total: texts.length };
+    <span class="token-keyword">const</span> id = ++requestId;
+    worker.<span class="token-function">postMessage</span>({ <span class="token-attr">type</span>: <span class="token-string">'analyze'</span>, texts, id });
+  }
+
+  <span class="token-keyword">return</span> {
+    results,
+    isLoading,
+    isModelReady,
+    progress,
+    status,
+    error,
+    loadingProgress,
+    analyze
+  };
+}</code></pre>
+
+        <div class="callout callout--info">
+          <span class="callout__icon">📦</span>
+          <div>
+            <strong>Why <code>shallowRef</code> for results?</strong>
+            We use <code>shallowRef</code> instead of <code>ref</code> for the results array because Vue doesn't need to deeply observe each result object — we replace the entire array on each analysis. This avoids unnecessary reactivity overhead with large batches.
+          </div>
+        </div>
+
+        <!-- SECTION 7: UI COMPONENTS -->
+        <h2 id="building-ui">7. Building the UI Components</h2>
+
+        <p>
+          The app has three main areas: a <strong>headline input</strong> (textarea + sample headlines), a <strong>results display</strong> with color-coded sentiment cards, and a <strong>summary dashboard</strong>.
+        </p>
+
+        <h3>The Main App Component</h3>
+
+        <div class="code-header">src/App.vue</div>
+        <pre><code><span class="token-tag">&lt;script setup&gt;</span>
+<span class="token-keyword">import</span> { ref, computed } <span class="token-keyword">from</span> <span class="token-string">'vue'</span>
+<span class="token-keyword">import</span> { useSentiment } <span class="token-keyword">from</span> <span class="token-string">'./composables/useSentiment'</span>
+
+<span class="token-keyword">const</span> {
+  results, isLoading, isModelReady,
+  progress, status, error, loadingProgress, analyze
+} = <span class="token-function">useSentiment</span>()
+
+<span class="token-keyword">const</span> inputText = <span class="token-function">ref</span>(<span class="token-string">''</span>)
+
+<span class="token-comment">// Sample headlines for instant demo</span>
+<span class="token-keyword">const</span> sampleHeadlines = [
+  <span class="token-string">'Tech stocks surge as AI adoption accelerates across industries'</span>,
+  <span class="token-string">'Devastating earthquake hits coastal region, thousands displaced'</span>,
+  <span class="token-string">'Scientists announce breakthrough in renewable energy storage'</span>,
+  <span class="token-string">'Global supply chain disruptions threaten holiday shopping season'</span>,
+  <span class="token-string">'Local community raises $2M for children\'s hospital expansion'</span>,
+  <span class="token-string">'Cybersecurity breach exposes millions of user accounts'</span>,
+  <span class="token-string">'New study reveals promising results for Alzheimer\'s treatment'</span>,
+  <span class="token-string">'Market volatility continues amid rising interest rate concerns'</span>
+]
+
+<span class="token-keyword">function</span> <span class="token-function">loadSamples</span>() {
+  inputText.value = sampleHeadlines.<span class="token-function">join</span>(<span class="token-string">'\n'</span>)
+}
+
+<span class="token-keyword">function</span> <span class="token-function">handleAnalyze</span>() {
+  <span class="token-keyword">const</span> lines = inputText.value
+    .<span class="token-function">split</span>(<span class="token-string">'\n'</span>)
+    .<span class="token-function">map</span>(l => l.<span class="token-function">trim</span>())
+    .<span class="token-function">filter</span>(l => l.length > <span class="token-number">0</span>)
+  <span class="token-function">analyze</span>(lines)
+}
+
+<span class="token-comment">// Computed summary stats</span>
+<span class="token-keyword">const</span> summary = <span class="token-function">computed</span>(() => {
+  <span class="token-keyword">if</span> (!results.value.length) <span class="token-keyword">return null</span>
+  <span class="token-keyword">const</span> pos = results.value.<span class="token-function">filter</span>(r => r.label === <span class="token-string">'POSITIVE'</span>).length
+  <span class="token-keyword">const</span> neg = results.value.length - pos
+  <span class="token-keyword">return</span> { positive: pos, negative: neg, total: results.value.length }
+})
+<span class="token-tag">&lt;/script&gt;</span></code></pre>
+
+        <h3>Sentiment Result Cards</h3>
+
+        <p>Each headline gets a color-coded card showing the sentiment label and confidence score:</p>
+
+        <div class="code-header">Template (in App.vue)</div>
+        <pre><code><span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-value">"results-grid"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;div</span>
+    <span class="token-attr">v-for</span>=<span class="token-value">"(item, i) in results"</span>
+    <span class="token-attr">:key</span>=<span class="token-value">"i"</span>
+    <span class="token-attr">class</span>=<span class="token-value">"result-card"</span>
+    <span class="token-attr">:class</span>=<span class="token-value">"item.label === 'POSITIVE' ? 'result-card--pos' : 'result-card--neg'"</span>
+  <span class="token-tag">&gt;</span>
+    <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-value">"result-card__header"</span><span class="token-tag">&gt;</span>
+      <span class="token-tag">&lt;span</span> <span class="token-attr">class</span>=<span class="token-value">"result-card__label"</span><span class="token-tag">&gt;</span>
+        {{ item.label === 'POSITIVE' ? '😊' : '😟' }}
+        {{ item.label }}
+      <span class="token-tag">&lt;/span&gt;</span>
+      <span class="token-tag">&lt;span</span> <span class="token-attr">class</span>=<span class="token-value">"result-card__score"</span><span class="token-tag">&gt;</span>
+        {{ (item.score * 100).toFixed(1) }}%
+      <span class="token-tag">&lt;/span&gt;</span>
+    <span class="token-tag">&lt;/div&gt;</span>
+    <span class="token-tag">&lt;p</span> <span class="token-attr">class</span>=<span class="token-value">"result-card__text"</span><span class="token-tag">&gt;</span>{{ item.text }}<span class="token-tag">&lt;/p&gt;</span>
+    <span class="token-comment">&lt;!-- Confidence bar --&gt;</span>
+    <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-value">"result-card__bar"</span><span class="token-tag">&gt;</span>
+      <span class="token-tag">&lt;div</span>
+        <span class="token-attr">class</span>=<span class="token-value">"result-card__bar-fill"</span>
+        <span class="token-attr">:style</span>=<span class="token-value">"{ width: (item.score * 100) + '%' }"</span>
+      <span class="token-tag">/&gt;</span>
+    <span class="token-tag">&lt;/div&gt;</span>
+  <span class="token-tag">&lt;/div&gt;</span>
+<span class="token-tag">&lt;/div&gt;</span></code></pre>
+
+        <p>
+          The confidence bar is a simple CSS-driven visualization — the <code>width</code> is bound to the score percentage. Cards with <code>POSITIVE</code> sentiment get a green accent; <code>NEGATIVE</code> gets red. This makes scanning results intuitive at a glance.
+        </p>
+
+        <!-- SECTION 8: BATCH ANALYSIS -->
+        <h2 id="batch-analysis">8. Batch Analysis with Progress</h2>
+
+        <p>
+          When analyzing multiple headlines, the worker processes them one at a time and reports progress. We surface this as a progress bar:
+        </p>
+
+        <div class="code-header">Progress bar template</div>
+        <pre><code><span class="token-tag">&lt;div</span> <span class="token-attr">v-if</span>=<span class="token-value">"isLoading"</span> <span class="token-attr">class</span>=<span class="token-value">"progress-section"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-value">"progress-bar"</span><span class="token-tag">&gt;</span>
+    <span class="token-tag">&lt;div</span>
+      <span class="token-attr">class</span>=<span class="token-value">"progress-bar__fill"</span>
+      <span class="token-attr">:style</span>=<span class="token-value">"{ width: (progress.current / progress.total * 100) + '%' }"</span>
+    <span class="token-tag">/&gt;</span>
+  <span class="token-tag">&lt;/div&gt;</span>
+  <span class="token-tag">&lt;p</span> <span class="token-attr">class</span>=<span class="token-value">"progress-text"</span><span class="token-tag">&gt;</span>
+    Analyzing {{ progress.current }} / {{ progress.total }} headlines...
+  <span class="token-tag">&lt;/p&gt;</span>
+<span class="token-tag">&lt;/div&gt;</span></code></pre>
+
+        <div class="callout callout--warn">
+          <span class="callout__icon">⚠️</span>
+          <div>
+            <strong>First load is slow.</strong>
+            The model (~67MB) needs to download on first use. Transformers.js caches it in the browser's Cache API, so subsequent loads are much faster (typically under 2 seconds). Show a loading indicator with download progress to set user expectations.
+          </div>
+        </div>
+
+        <!-- SECTION 9: PERFORMANCE -->
+        <h2 id="performance">9. Performance Tips</h2>
+
+        <p>Here are practical optimizations I've found useful when working with Transformers.js:</p>
+
+        <ol>
+          <li>
+            <strong>Use quantized models.</strong> The <code>Xenova/</code> prefix on Hugging Face denotes models converted and quantized for browser use. They're 4–8x smaller than full models with minimal quality loss.
+          </li>
+          <li>
+            <strong>Preload the model.</strong> Trigger <code>loadModel()</code> on app mount rather than waiting for the first analysis. This hides the loading time during the period where the user is reading the UI.
+          </li>
+          <li>
+            <strong>Batch wisely.</strong> Processing 100+ headlines sequentially in a Web Worker works fine, but update the UI between items. Don't block the worker's message loop.
+          </li>
+          <li>
+            <strong>Enable WebGPU when available.</strong> Transformers.js v3+ supports WebGPU acceleration. On supported browsers (Chrome 113+), this can be 5–10x faster than WASM:
+          </li>
+        </ol>
+
+        <div class="code-header">WebGPU configuration</div>
+        <pre><code>classifier = <span class="token-keyword">await</span> <span class="token-function">pipeline</span>(
+  <span class="token-string">'sentiment-analysis'</span>,
+  <span class="token-string">'Xenova/distilbert-base-uncased-finetuned-sst-2-english'</span>,
+  {
+    <span class="token-attr">device</span>: <span class="token-string">'webgpu'</span>,     <span class="token-comment">// Use GPU if available</span>
+    <span class="token-attr">dtype</span>: <span class="token-string">'fp32'</span>,        <span class="token-comment">// Full precision for WebGPU</span>
+  }
+);</code></pre>
+
+        <ol start="5">
+          <li>
+            <strong>Cache results.</strong> If the same headline is analyzed twice, return the cached result instead of running inference again. A simple <code>Map</code> keyed by text works well.
+          </li>
+        </ol>
+
+        <!-- SECTION 10: CONCLUSION -->
+        <h2 id="conclusion">10. Conclusion & Next Steps</h2>
+
+        <p>
+          We built a fully client-side sentiment analysis app using <strong>Vue.js</strong> and <strong>Transformers.js</strong>. The entire ML inference happens in the browser — no backend, no API keys, no server costs. The key ingredients:
+        </p>
+
+        <ul>
+          <li><strong>Transformers.js</strong> for the ML pipeline (Hugging Face in the browser)</li>
+          <li><strong>Web Worker</strong> to keep the UI responsive during inference</li>
+          <li><strong>Vue composable</strong> for clean, reactive state management</li>
+          <li><strong>ONNX Runtime</strong> (WASM/WebGPU) for efficient model execution</li>
+        </ul>
+
+        <h3>Ideas for extending this:</h3>
+        <ul>
+          <li><strong>Multi-language support</strong> — swap in a multilingual model like <code>Xenova/bert-base-multilingual-uncased-sentiment</code></li>
+          <li><strong>Named Entity Recognition</strong> — add NER to extract people, companies, and locations from headlines</li>
+          <li><strong>Trend visualization</strong> — chart sentiment over time using a news RSS feed</li>
+          <li><strong>Emotion classification</strong> — go beyond positive/negative with fine-grained emotions (joy, anger, fear, etc.)</li>
+          <li><strong>Comparison mode</strong> — compare sentiment across different news sources on the same topic</li>
+        </ul>
+
+        <hr />
+
+        <blockquote>
+          The full source code is available on GitHub. Clone it, experiment with different models, and deploy your own version on GitHub Pages — it's free to host since there's no backend.
+        </blockquote>
+
+        <p>
+          <a href="https://github.com/vanand46" target="_blank" rel="noopener noreferrer" class="btn btn--fill" style="margin-top: 0.5rem;">
+            View on GitHub →
+          </a>
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ARTICLE FOOTER -->
+  <footer class="article-footer">
+    <div class="container">
+      <div class="article-footer__tags">
+        <div class="article-footer__tags-label">Topics</div>
+        <div class="tags">
+          <span class="tag tag--blue">Vue.js</span>
+          <span class="tag tag--green">Transformers.js</span>
+          <span class="tag tag--purple">NLP</span>
+          <span class="tag">Sentiment Analysis</span>
+          <span class="tag">Web Workers</span>
+          <span class="tag">ONNX</span>
+          <span class="tag">Hugging Face</span>
+          <span class="tag">Client-side ML</span>
+        </div>
+      </div>
+      <div class="article-footer__cta">
+        <div class="article-footer__cta-text">
+          <h3>Want to build this yourself?</h3>
+          <p>Check out the full source code on GitHub — clone, customize, and deploy on GitHub Pages.</p>
+        </div>
+        <a href="https://github.com/vanand46" target="_blank" rel="noopener noreferrer" class="btn btn--fill btn--sm">
+          View GitHub →
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SITE FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>Built by <strong>Anand V</strong> · Full-Stack Engineer & AI Enthusiast</p>
+    </div>
+  </footer>
+
+  <script>
+    // Reading progress bar
+    window.addEventListener('scroll', () => {
+      const bar = document.getElementById('readingProgress');
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    });
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
