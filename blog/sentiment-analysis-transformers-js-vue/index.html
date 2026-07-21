@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sentiment Analysis on News Using Transformers.js in Vue — Anand V</title>
-  <meta name="description" content="A simple project on news sentiment analysis using Transformers.js and Vue.js directly in the browser." />
+  <meta name="description"
+    content="A simple project on news sentiment analysis using Transformers.js and Vue.js directly in the browser." />
   <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
 </head>
+
 <body>
 
   <!-- NAVIGATION -->
@@ -46,10 +50,13 @@
   <main class="article-body">
     <div class="container" style="max-width: 720px;">
       <div class="article-content">
-        <p>This project runs a sentiment analysis ML model completely inside the browser using <strong>Transformers.js</strong> and <strong>Vue.js</strong>. No backend, no API keys, no server costs. A Web Worker keeps the Vue UI responsive while the model processes news headlines.</p>
-        
+        <p>This project runs a sentiment analysis ML model completely inside the browser using
+          <strong>Transformers.js</strong> and <strong>Vue.js</strong>. No backend, no API keys, no server costs. A Web
+          Worker keeps the Vue UI responsive while the model processes news headlines.</p>
+
         <p style="margin-top: 2rem;"><strong>1. Web Worker Setup (worker.js)</strong></p>
-        <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 13.5px; line-height: 1.6;"><code>import { pipeline } from '@huggingface/transformers';
+        <pre
+          style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 13.5px; line-height: 1.6;"><code>import { pipeline } from '@huggingface/transformers';
 
 let classifier = await pipeline(
   'sentiment-analysis',
@@ -62,7 +69,8 @@ self.addEventListener('message', async (event) => {
 });</code></pre>
 
         <p style="margin-top: 2rem;"><strong>2. Vue.js Implementation (App.vue)</strong></p>
-        <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 13.5px; line-height: 1.6;"><code>&lt;script setup&gt;
+        <pre
+          style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 13.5px; line-height: 1.6;"><code>&lt;script setup&gt;
 import { ref, onMounted } from 'vue'
 
 const headline = ref('')
@@ -101,20 +109,29 @@ function analyze() {
 
         <p style="margin-top: 2rem;"><strong>Pros & Cons of this Approach</strong></p>
         <ul style="padding-left: 1.5rem; line-height: 1.8; margin-top: 0.5rem; color: #4b5563; font-size: 15px;">
-          <li><strong>Advantages:</strong> Absolute privacy (data never leaves the device), zero API server costs, and it can work completely offline after the initial model download.</li>
-          <li><strong>Disadvantages:</strong> The first page load can be heavy because the browser has to download the ML model (~67MB for quantized models, ~268MB without quantization). It also relies on the user's device memory and CPU, so it's not suitable for large models like GPT.</li>
+          <li><strong>Advantages:</strong> Absolute privacy (data never leaves the device), zero API server costs, and
+            it can work completely offline after the initial model download.</li>
+          <li><strong>Disadvantages:</strong> The first page load can be heavy because the browser has to download the
+            ML model (~67MB for quantized models, ~268MB without quantization). It also relies on the user's device
+            memory and CPU, so it's not suitable for large models like GPT.</li>
         </ul>
 
         <p style="margin-top: 2rem;"><strong>Real-World Examples</strong></p>
         <p>Hugging Face themselves have built working demos using Transformers.js that you can try right now:</p>
         <ul style="padding-left: 1.5rem; line-height: 1.8; margin-top: 0.5rem; color: #4b5563; font-size: 15px;">
-          <li><strong>Whisper Web</strong> — Real-time speech-to-text transcription running fully in the browser. You can record audio and it transcribes it locally without sending anything to a server. Try it at <a href="https://huggingface.co/spaces/Xenova/whisper-web" target="_blank" style="color: #2563eb;">huggingface.co/spaces/Xenova/whisper-web</a></li>
-          <li><strong>Browser Background Removal</strong> — Using the RMBG model by BRIA AI, developers have built tools that remove image backgrounds directly in the browser without uploading photos to any cloud server.</li>
-          <li><strong>Worldline Tech Blog</strong> — Worldline, a major European payments company, published a <a href="https://blog.worldline.tech/2026/01/13/transformersjs-intro.html" target="_blank" style="color: #2563eb;">tech blog post</a> exploring Transformers.js for browser-side NLP tasks like sentiment analysis — showing industry interest in this approach for handling sensitive data on-device.</li>
+          <li><strong>Whisper Web</strong> — Real-time speech-to-text transcription running fully in the browser. You
+            can record audio and it transcribes it locally without sending anything to a server. Try it at <a
+              href="https://huggingface.co/spaces/Xenova/whisper-web" target="_blank"
+              style="color: #2563eb;">huggingface.co/spaces/Xenova/whisper-web</a></li>
+          <li><strong>Browser Background Removal</strong> — Using the RMBG model by BRIA AI, developers have built tools
+            that remove image backgrounds directly in the browser without uploading photos to any cloud server.</li>
+          <li><strong>Worldline Tech Blog</strong> — Worldline, a major European payments company, published a <a
+              href="https://blog.worldline.tech/2026/01/13/transformersjs-intro.html" target="_blank"
+              style="color: #2563eb;">tech blog post</a> exploring Transformers.js for browser-side NLP tasks like
+            sentiment analysis — showing industry interest in this approach for handling sensitive data on-device.</li>
         </ul>
-        
+
         <p style="margin-top: 2rem;">
-          <strong>Live Demo:</strong> <a href="#" target="_blank">Link will be added soon</a><br />
           <strong>Source Code:</strong> <a href="https://github.com/vanand46" target="_blank">Available on my GitHub</a>
         </p>
       </div>
@@ -129,4 +146,5 @@ function analyze() {
   </footer>
 
 </body>
+
 </html>
