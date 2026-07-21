@@ -103,6 +103,15 @@ function analyze() {
   &lt;/div&gt;
 &lt;/template&gt;</code></pre>
 
+        <p style="margin-top: 2rem;"><strong>Pros & Cons of this Approach</strong></p>
+        <ul style="padding-left: 1.5rem; line-height: 1.8; margin-top: 0.5rem; color: #4b5563; font-size: 15px;">
+          <li><strong>Advantages:</strong> Absolute privacy (data never leaves the device), zero API server costs, and it can work completely offline after the initial model download.</li>
+          <li><strong>Disadvantages:</strong> The first page load can be heavy because the browser has to download the ML model (~60MB for small models). It also relies on the user's device memory and battery, so it's not suitable for massive models like ChatGPT.</li>
+        </ul>
+
+        <p style="margin-top: 2rem;"><strong>Real-World Production Use Case</strong></p>
+        <p>A great example of Transformers.js in production is <strong>Privacy-First Image Background Removal</strong>. Many modern web design tools now use Transformers.js to run image segmentation models (like RMBG) directly in the browser. Instead of uploading a user's private photo to a cloud server to remove the background, the ML model processes the image right on their laptop. This saves the company huge cloud computing costs and gives the user instant, secure results.</p>
+        
         <p style="margin-top: 2rem;">
           <strong>Live Demo:</strong> <a href="#" target="_blank">Link will be added soon</a><br />
           <strong>Source Code:</strong> <a href="https://github.com/vanand46" target="_blank">Available on my GitHub</a>
