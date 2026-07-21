@@ -109,8 +109,13 @@ function analyze() {
           <li><strong>Disadvantages:</strong> The first page load can be heavy because the browser has to download the ML model (~67MB for quantized models, ~268MB without quantization). It also relies on the user's device memory and CPU, so it's not suitable for large models like GPT.</li>
         </ul>
 
-        <p style="margin-top: 2rem;"><strong>Real-World Production Use Case</strong></p>
-        <p>A great example of Transformers.js in production is <strong>Privacy-First Image Background Removal</strong>. Many modern web design tools now use Transformers.js to run image segmentation models (like RMBG) directly in the browser. Instead of uploading a user's private photo to a cloud server to remove the background, the ML model processes the image right on their laptop. This saves the company huge cloud computing costs and gives the user instant, secure results.</p>
+        <p style="margin-top: 2rem;"><strong>Real-World Examples</strong></p>
+        <p>Hugging Face themselves have built working demos using Transformers.js that you can try right now:</p>
+        <ul style="padding-left: 1.5rem; line-height: 1.8; margin-top: 0.5rem; color: #4b5563; font-size: 15px;">
+          <li><strong>Whisper Web</strong> — Real-time speech-to-text transcription running fully in the browser. You can record audio and it transcribes it locally without sending anything to a server. Try it at <a href="https://huggingface.co/spaces/Xenova/whisper-web" target="_blank" style="color: #2563eb;">huggingface.co/spaces/Xenova/whisper-web</a></li>
+          <li><strong>Browser Background Removal</strong> — Using the RMBG model by BRIA AI, developers have built tools that remove image backgrounds directly in the browser without uploading photos to any cloud server.</li>
+        </ul>
+        <p>These are open-source demos, not commercial products. But they prove that browser-side ML inference is practical and ready for real use cases where privacy and zero server cost matter.</p>
         
         <p style="margin-top: 2rem;">
           <strong>Live Demo:</strong> <a href="#" target="_blank">Link will be added soon</a><br />
