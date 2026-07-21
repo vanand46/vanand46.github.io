@@ -54,8 +54,35 @@
         
         <p>But recently I explored Transformers.js by Hugging Face. The best part about it is that it runs the ML model completely inside the browser itself. There is no backend needed, no API keys required, and absolutely no server costs.</p>
         
-        <p>For this project, I used a pre-trained model for sentiment analysis. I ran it in a Web Worker so that our Vue UI doesn't freeze when the model is processing the news headlines.</p>
+        <p>For this project, I used a pre-trained model for sentiment analysis. I ran it in a Web Worker so that our Vue UI doesn't freeze when the model is processing the news headlines. Here is a small snippet of how the Web Worker is set up using Transformers.js:</p>
         
+        <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 14px; line-height: 1.6;"><code>import { pipeline } from '@huggingface/transformers';
+
+// Load the sentiment analysis model
+let classifier = await pipeline(
+  'sentiment-analysis',
+  'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
+);
+
+// Listen for messages from the Vue app
+self.addEventListener('message', async (event) => {
+  let result = await classifier(event.data.text);
+  self.postMessage(result);
+});</code></pre>
+
+        <p>And from our Vue frontend, we simply send the news headline to this worker and wait for the result:</p>
+
+        <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 14px; line-height: 1.6;"><code>const worker = new Worker('worker.js');
+
+// Send news headline to analyze
+worker.postMessage({ text: "Tech stocks surge as AI adoption accelerates" });
+
+// Get the result back
+worker.addEventListener('message', (event) => {
+  console.log("Sentiment Result:", event.data); 
+  // Output: [{ label: "POSITIVE", score: 0.99 }]
+});</code></pre>
+
         <p>You just paste some news headlines into the app, and it quickly classifies them as Positive or Negative with a confidence score. It's very fast once the model is downloaded to the browser cache.</p>
         
         <p>This is a very neat way to add AI features directly into frontend web apps without much hassle.</p>
