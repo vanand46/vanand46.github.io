@@ -46,11 +46,7 @@
   <main class="article-body">
     <div class="container" style="max-width: 720px;">
       <div class="article-content">
-        <p>Hello everyone,</p>
-        
-        <p>Today I want to share a simple News Sentiment Analyzer using <strong>Vue.js</strong> and <strong>Transformers.js</strong>.</p>
-        
-        <p>Instead of using a Python backend, this runs the ML model completely inside the browser. No API keys, no server costs. We use a Web Worker so the Vue UI stays fast and doesn't freeze.</p>
+        <p>This project runs a sentiment analysis ML model completely inside the browser using <strong>Transformers.js</strong> and <strong>Vue.js</strong>. No backend, no API keys, no server costs. A Web Worker keeps the Vue UI responsive while the model processes news headlines.</p>
         
         <p style="margin-top: 2rem;"><strong>1. Web Worker Setup (worker.js)</strong></p>
         <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 13.5px; line-height: 1.6;"><code>import { pipeline } from '@huggingface/transformers';
@@ -116,7 +112,6 @@ function analyze() {
           <li><strong>Browser Background Removal</strong> — Using the RMBG model by BRIA AI, developers have built tools that remove image backgrounds directly in the browser without uploading photos to any cloud server.</li>
           <li><strong>Worldline Tech Blog</strong> — Worldline, a major European payments company, published a <a href="https://blog.worldline.tech/2026/01/13/transformersjs-intro.html" target="_blank" style="color: #2563eb;">tech blog post</a> exploring Transformers.js for browser-side NLP tasks like sentiment analysis — showing industry interest in this approach for handling sensitive data on-device.</li>
         </ul>
-        <p>These are open-source demos, not commercial products. But they prove that browser-side ML inference is practical and ready for real use cases where privacy and zero server cost matter.</p>
         
         <p style="margin-top: 2rem;">
           <strong>Live Demo:</strong> <a href="#" target="_blank">Link will be added soon</a><br />
